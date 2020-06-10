@@ -9,6 +9,7 @@ import 'package:deliverymanagementsystem/pages/OrderDetails.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 void main()
 {
@@ -30,6 +31,7 @@ void main()
       '/register': (BuildContext context)=>Register(),
       '/forgot':   (BuildContext context)=>ForgotPassword(),
     },
+
 
   ));
 }

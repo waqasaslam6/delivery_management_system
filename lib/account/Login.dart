@@ -1,4 +1,7 @@
+import 'package:deliverymanagementsystem/account/Register.dart';
+import 'package:deliverymanagementsystem/pages/MyOrders.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -6,59 +9,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  void _showModalSheet(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (builder) {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            decoration: BoxDecoration(
-              // color: Theme.of(context).primaryColor,
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-                topRight: Radius.circular(20.0),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 15, left: 15, right: 15, bottom: 5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    height: 45,
-                    width: MediaQuery.of(context).size.width,
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(8.0),
-                      ),
-                      color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "It will be added soon",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          // fontWeight: FontWeight.w600,
-                          // fontSize: 20.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            padding: EdgeInsets.all(0.0),
-          );
-        });
-  }
 
   // Initially password is obscure
 
@@ -71,7 +21,14 @@ class _LoginState extends State<Login> {
     final FormState form = _formKey.currentState;
     if (form.validate()) {
       print('Form is valid');
-      Navigator.pushNamed(context, '/orders');
+      Navigator.push(
+          context,
+          PageTransition(
+              curve: Curves.bounceOut,
+              type: PageTransitionType.rotate,
+              alignment: Alignment.topCenter,
+              child: MyOrders()));
+
     } else {
       print('Form is invalid');
     }
@@ -153,6 +110,7 @@ class _LoginState extends State<Login> {
                   onPressed: (){
                     setState(() {
                       validate();
+
                     });
                   },
                   color: Theme.of(context).primaryColor,
@@ -183,9 +141,14 @@ class _LoginState extends State<Login> {
                     GestureDetector(
                       onTap: ()
                       {
-                        setState(() {
-                         _showModalSheet(context);
-                        });
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                                curve: Curves.bounceOut,
+                                duration: Duration(milliseconds: 700),
+                                type: PageTransitionType.downToUp,
+                                alignment: Alignment.topCenter,
+                                child: Register()));
 
                       },
                       child: Text("Register ?",
