@@ -16,18 +16,25 @@ class _LoginState extends State<Login> {
 
   String _password;
 
-  void validate()
+  void validate(email)
   {
     final FormState form = _formKey.currentState;
     if (form.validate()) {
+      var emailid = email;
+      bool emailValid = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(emailid);
+      print (emailValid);
       print('Form is valid');
-      Navigator.push(
-          context,
-          PageTransition(
-              curve: Curves.bounceOut,
-              type: PageTransitionType.rotate,
-              alignment: Alignment.topCenter,
-              child: MyOrders()));
+      if(emailValid)
+        {
+          Navigator.push(
+              context,
+              PageTransition(
+                  curve: Curves.bounceOut,
+                  type: PageTransitionType.rotate,
+                  alignment: Alignment.topCenter,
+                  child: MyOrders()));
+        }
+
 
     } else {
       print('Form is invalid');
@@ -39,6 +46,7 @@ class _LoginState extends State<Login> {
       _obscureText = !_obscureText;
     });
   }
+  TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
   @override
   void dispose() {
@@ -69,6 +77,7 @@ class _LoginState extends State<Login> {
                 ),),
                 SizedBox(height: 5,),
                 TextFormField(
+                  controller: email,
                   validator: (val) => val.isEmpty ? 'Email is required' : null,
                   decoration: InputDecoration(
                     hintText: "Email",
@@ -109,7 +118,7 @@ class _LoginState extends State<Login> {
                   height: 45,
                   onPressed: (){
                     setState(() {
-                      validate();
+                      validate(email.text);
 
                     });
                   },
