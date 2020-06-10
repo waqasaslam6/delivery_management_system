@@ -1,5 +1,7 @@
 import 'package:deliverymanagementsystem/pages/MyOrders.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:page_transition/page_transition.dart';
 
 class Register extends StatefulWidget {
@@ -10,7 +12,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
 
 
-
+  Country _selected;
   bool _obscureText = true;
 
   String _password;
@@ -47,6 +49,27 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: BottomAppBar(
+        child: MaterialButton(
+          minWidth: MediaQuery.of(context).size.width,
+          height: 45,
+          onPressed: (){
+            setState(() {
+              validate();
+
+            });
+          },
+          color: Theme.of(context).primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          child: Text("Register",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 18
+            ),),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
         elevation: 0,
@@ -61,22 +84,55 @@ class _RegisterState extends State<Register> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("Register",
+                Text("Join the revolution",
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),),
                 SizedBox(height: 5,),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextFormField(
+                        validator: (val) => val.isEmpty ? 'Name is required' : null,
+                        decoration: InputDecoration(
+                          hintText: "First Name",
+                          labelText: "First Name",
+                          labelStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            //    color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 20,),
+                    Expanded(
+                      child: TextFormField(
+                        validator: (val) => val.isEmpty ? 'Name is required' : null,
+                        decoration: InputDecoration(
+                          hintText: "Last Name",
+                          labelText: "Last Name",
+                          labelStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            //    color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 TextFormField(
                   validator: (val) => val.isEmpty ? 'Email is required' : null,
                   decoration: InputDecoration(
                     hintText: "Email",
-                    labelText: "Email",
+                    labelText: "Your Email",
                     labelStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
+                  //    color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -95,65 +151,85 @@ class _RegisterState extends State<Register> {
                         scale: 3,color: Theme.of(context).primaryColor,),
                     ),
                     hintText: "Password",
-                    labelText:  "Password",
+                    labelText:  "Choose a password",
                     labelStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
+                //      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
-                SizedBox(height: 40,),
-                MaterialButton(
-                  minWidth: MediaQuery.of(context).size.width,
-                  height: 45,
-                  onPressed: (){
-                    setState(() {
-                      validate();
-
-                    });
-                  },
-                  color: Theme.of(context).primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                  ),
-                  child: Text("Log in",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18
-                    ),),
-                ),
+                SizedBox(height: 20,),
+            Text("Country of residence",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[600],
+            ),),
                 SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("Forgot password ?",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).primaryColor,
-                      ),),
-                  ],
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                shape: BoxShape.rectangle,
+              ),
+              child: CountryPicker(
+                dense: false,
+                showDialingCode: false,
+                showName: true,
+                onChanged: (Country country) {
+                  setState(() {
+                    _selected = country;
+                  });
+                },
+                selectedCountry: _selected,
+                nameTextStyle: TextStyle(
+                  fontSize: 18,
                 ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: ()
-                      {
-                        setState(() {
-
-                        });
-
-                      },
-                      child: Text("Register ?",
+              ),
+            ),
+                Container(
+                  margin: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(20),
+                  child: RichText(
+                    text: TextSpan(
+                        text: 'By signing up you agree to our ',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).primaryColor,
-                        ),),
+                            color: Colors.black,
+                            fontSize: 16),
+                        children: <TextSpan>[
+                          TextSpan(text: 'Terms of Use',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor, fontSize: 16),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // navigate to desired screen
+                              },
+                          ),
+                          TextSpan(text: ' and ',
+                            style: TextStyle(
+                                color: Colors.black, fontSize: 16),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // navigate to desired screen
+                              },
+                          ),
+                          TextSpan(text: 'privacy policy',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor, fontSize: 16),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // navigate to desired screen
+                              },
+                          ),
+
+                        ]
                     ),
-                  ],
+                  ),
                 ),
+
+
+
               ],
             ),
           ),

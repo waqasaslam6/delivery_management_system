@@ -1,3 +1,4 @@
+import 'package:deliverymanagementsystem/account/ForgotPassword.dart';
 import 'package:deliverymanagementsystem/account/Register.dart';
 import 'package:deliverymanagementsystem/pages/MyOrders.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,7 @@ class _LoginState extends State<Login> {
                     labelStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
+                    //  color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -108,7 +109,7 @@ class _LoginState extends State<Login> {
                     labelStyle: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
+                  //    color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -136,11 +137,24 @@ class _LoginState extends State<Login> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text("Forgot password ?",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Theme.of(context).primaryColor,
-                    ),),
+                    GestureDetector(
+                      onTap: ()
+                      {
+                        Navigator.push(
+                            context,
+                            PageTransition(
+                              duration: Duration(milliseconds: 700),
+                                curve: Curves.bounceOut,
+                                type: PageTransitionType.upToDown,
+                                alignment: Alignment.topCenter,
+                                child: ForgotPassword()));
+                      },
+                      child: Text("Forgot password ?",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).primaryColor,
+                      ),),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10,),

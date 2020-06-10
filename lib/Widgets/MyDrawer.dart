@@ -19,7 +19,7 @@ class MyDrawer extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                 )),
-            currentAccountPicture: Image.network("https://cdn5.vectorstock.com/i/1000x1000/53/24/profile-icon-male-emotion-avatar-man-cartoon-vector-15175324.jpg"),
+            currentAccountPicture: ClipOval(child: Image.network("https://cdn5.vectorstock.com/i/1000x1000/53/24/profile-icon-male-emotion-avatar-man-cartoon-vector-15175324.jpg")),
           ),
           ListTile(
             leading: Icon(Icons.settings_applications),
