@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:deliverymanagementsystem/account/ForgotPassword.dart';
 import 'package:deliverymanagementsystem/account/Register.dart';
 import 'package:deliverymanagementsystem/pages/MyOrders.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:http/http.dart' as http;
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,42 +17,89 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  // Initially password is obscure
 
+  ProgressDialog pr;
   bool _obscureText = true;
-
   String _password;
+  final String url = "http://bringthings.com/parcel/api/login";
+  var code;
+  var first_name;
+  var last_name;
+  var email_address;
 
-  void validate(email)
-  {
-    final FormState form = _formKey.currentState;
-    if (form.validate()) {
-      var emailid = email;
-      bool emailValid = RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(emailid);
-      print (emailValid);
-      print('Form is valid');
-      if(emailValid)
-        {
-          Navigator.push(
-              context,
-              PageTransition(
-                  curve: Curves.bounceOut,
-                  type: PageTransitionType.rotate,
-                  alignment: Alignment.topCenter,
-                  child: MyOrders()));
-        }
-
-
-    } else {
-      print('Form is invalid');
-    }
-  }
-  // Toggles the password show status
+  var response;
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
     });
   }
+
+  Future<Map<String, dynamic>> doLogin(String email, String password) async {
+    pr.show();
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      print(email);
+      print(password);
+      Map data = {
+          "email":email,
+          "password":password,
+          "device_token":"s",
+          "role":"rider"
+      };
+      //encode Map to JSON
+      var body = json.encode(data);
+      response = await http.post(url,
+          headers: {"Content-Type": "application/json"},
+          body: body
+      );
+      print("${response.body}");
+
+      final Map<String, dynamic> authResponseData = json.decode(response.body);
+      code= authResponseData["code"];
+      try{
+        if(code==200)
+        {
+          setValues();
+          pr.hide();
+          print("Login Success");
+          Navigator.push(
+              context,
+              PageTransition(
+                  curve: Curves.bounceOut,
+                  type: PageTransitionType.leftToRight,
+                  alignment: Alignment.topCenter,
+                  child: MyOrders()));
+        }
+        else{
+           pr.hide();
+          print("Invalid Details");
+          AwesomeDialog(
+            isDense: true,
+            context: context,
+            dialogType: DialogType.NO_HEADER,
+            animType: AnimType.SCALE,
+            title: 'Login Failed',
+            desc: 'Invalid Email / Password combination',
+            btnCancelOnPress: () {},
+            btnOkOnPress: () {},
+          )..show();
+        }
+      }
+      catch(e)
+    {print("There is an error.");}
+    }
+  }
+  void validate(email,password) {
+    final FormState form = _formKey.currentState;
+    if (form.validate()) {
+      print('Form is valid');
+          doLogin(email, password);
+
+    } else {
+      print('Form is invalid');
+    }
+  }
+
   TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
   @override
@@ -54,8 +107,32 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  void setValues() async {
+    SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    sharedPrefs.setString("firstName", first_name);
+    sharedPrefs.setString("lastName", last_name);
+    sharedPrefs.setString("email", email_address);
+    print("Values Set Done");
+  }
+
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+        message: '  Please Wait...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 1.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 14.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.w600)
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
@@ -79,7 +156,7 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 5,),
                 TextFormField(
                   controller: email,
-                  validator: (val) => val.isEmpty ? 'Email is required' : null,
+              validator: (val) => RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(val) ? null : "Please input valid email",
                   decoration: InputDecoration(
                     hintText: "Email",
                     labelText: "Email",
@@ -119,8 +196,7 @@ class _LoginState extends State<Login> {
                   height: 45,
                   onPressed: (){
                     setState(() {
-                      validate(email.text);
-
+                      validate(email.text,password.text);
                     });
                   },
                   color: Theme.of(context).primaryColor,
@@ -172,7 +248,6 @@ class _LoginState extends State<Login> {
                                 type: PageTransitionType.downToUp,
                                 alignment: Alignment.topCenter,
                                 child: Register()));
-
                       },
                       child: Text("Register ?",
                         style: TextStyle(

@@ -10,9 +10,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main()
 {
+  SharedPreferences.setMockInitialValues({});
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: "Delivery Management System",
@@ -31,7 +33,6 @@ void main()
       '/register': (BuildContext context)=>Register(),
       '/forgot':   (BuildContext context)=>ForgotPassword(),
     },
-
 
   ));
 }
